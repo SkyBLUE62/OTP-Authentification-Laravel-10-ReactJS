@@ -1,5 +1,4 @@
 import React from 'react';
-import LoginForm from './Form/loginForm';
 import Home from './Home/Home';
 import Footer from './Footer/Footer';
 const App = () => {

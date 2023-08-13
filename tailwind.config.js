@@ -17,6 +17,8 @@ export default {
         title: '#EF5858',
         font: '#F4F4F4',
         primary: '#FFDE69',
+        secondary: '#050522',
+        danger: '#f26c63',
       },
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],
@@ -28,8 +30,15 @@ export default {
         },
       },
       borderColor: {
-        primary: '#FFDE69'
+        primary: '#FFDE69',
+        secondary: '#050522',
       },
+      borderWidth: {
+        '1.5': '1.5px',
+      },
+      height: {
+        160: '40rem',
+      }
     },
     plugins: [],
   }

@@ -4,10 +4,13 @@ import MainTitle from '../Title/MainTitle'
 import HomeDescription from '../Content/HomeDescription'
 import BtnPrimary from '../Button/BtnPrimary'
 import BtnTransparent from '../Button/BtnTransparent'
+import RegisterForm from '../Form/RegisterForm';
+
+
 
 const Home = () => {
     return (
-        <div className=''>
+        <>
             <IconSVG />
             <MainTitle content='Welcome' />
             <HomeDescription />
@@ -17,7 +20,9 @@ const Home = () => {
                 <BtnTransparent content='Login' />
             </div>
 
-        </div>
+            <RegisterForm />
+
+        </>
     )
 }
 
