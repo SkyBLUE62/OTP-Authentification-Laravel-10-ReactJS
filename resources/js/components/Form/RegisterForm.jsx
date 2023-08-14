@@ -2,10 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { AiOutlineCloseCircle } from 'react-icons/ai';
 import BtnForm from '../Button/BtnForm';
 import RegisterInput from './Input/RegisterInput';
+import { useForm } from "react-hook-form"
 
 const RegisterForm = ({ initRegister, status }) => {
     const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm()
 
     useEffect(() => {
         if (status === true) {
@@ -24,6 +31,10 @@ const RegisterForm = ({ initRegister, status }) => {
         }, 500);
     }
 
+    function onSubmit(data) {
+        console.log(data)
+    }
+
     return (
         <>
             {view && (
@@ -37,13 +48,13 @@ const RegisterForm = ({ initRegister, status }) => {
                             </div>
                         </div>
 
-                        <form>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col space-y-5'>
-                                <RegisterInput label='Username' id='username' name='username' type='text' />
-                                <RegisterInput label='Email' id='email' name='email' type='email' />
-                                <RegisterInput label='Password' id='password' name='password' type='password' />
-                                <RegisterInput label='Confirm Password' id='confirmpass' name='confirmpass' type='password' />
-                                <BtnForm />
+                                <RegisterInput label='Username' id='username' name='username' type='text' register={register} errors={errors} />
+                                <RegisterInput label='Email' id='email' name='email' type='email' register={register} errors={errors} />
+                                <RegisterInput label='Password' id='password' name='password' type='password' register={register} errors={errors} />
+                                <RegisterInput label='Confirm Password' id='confirmpass' name='confirmpass' type='password' register={register} errors={errors} />
+                                <BtnForm type='submit'>Submit</BtnForm>
                             </div>
                         </form>
 
