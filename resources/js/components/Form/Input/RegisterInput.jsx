@@ -4,7 +4,7 @@ import { AiOutlineEye, AiOutlineLock, AiOutlineMail } from 'react-icons/ai'
 const RegisterInput = ({ label, ...props }) => {
     return (
         <div className='flex flex-col border-1.5 rounded-lg border-secondary relative h-14'>
-            <label htmlFor="" className='absolute top-0 left-2 transform -translate-y-1/2 bg-card px-1'>
+            <label htmlFor={props.id} className='absolute top-0 left-2 transform -translate-y-1/2 bg-card px-1'>
                 {label}
             </label>
             <div className='flex relative flex-row w-full h-full'>

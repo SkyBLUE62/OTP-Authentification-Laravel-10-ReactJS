@@ -40,8 +40,8 @@ const LoginForm = ({ status, initLogin }) => {
 
                         <form>
                             <div className='flex flex-col space-y-5'>
-                                <RegisterInput label='Email' name='email' type='email' />
-                                <RegisterInput label='Password' name='password' type='password' />
+                                <RegisterInput label='Email' id='email' name='email' type='email' />
+                                <RegisterInput label='Password' id='password' name='password' type='password' />
                                 <div className='flex flex-row justify-between items-center'>
                                     <div className='flex flex-row items-center justify-center space-x-2'>
                                         <input type="checkbox" name="remember" className='h-4 w-4' />

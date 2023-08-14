@@ -23,7 +23,7 @@ const RegisterForm = ({ initRegister, status }) => {
             document.body.style.overflow = 'auto';
         }, 500);
     }
-    
+
     return (
         <>
             {view && (
@@ -39,10 +39,10 @@ const RegisterForm = ({ initRegister, status }) => {
 
                         <form>
                             <div className='flex flex-col space-y-5'>
-                                <RegisterInput label='Username' name='username' type='text' />
-                                <RegisterInput label='Email' name='email' type='email' />
-                                <RegisterInput label='Password' name='password' type='password' />
-                                <RegisterInput label='Confirm Password' name='confirmpass' type='password' />
+                                <RegisterInput label='Username' id='username' name='username' type='text' />
+                                <RegisterInput label='Email' id='email' name='email' type='email' />
+                                <RegisterInput label='Password' id='password' name='password' type='password' />
+                                <RegisterInput label='Confirm Password' id='confirmpass' name='confirmpass' type='password' />
                                 <BtnForm />
                             </div>
                         </form>
