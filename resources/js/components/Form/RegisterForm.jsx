@@ -23,6 +23,7 @@ const RegisterForm = ({ initRegister, status }) => {
             document.body.style.overflow = 'auto';
         }, 500);
     }
+    
     return (
         <>
             {view && (
