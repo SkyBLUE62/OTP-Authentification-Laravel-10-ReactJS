@@ -11,7 +11,7 @@ const RegisterForm = ({ initRegister, status }) => {
         if (status === true) {
             setView(true);
             setAnimation('animate__animated animate__backInUp');
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
         }
     }, [status]);
 
@@ -30,7 +30,7 @@ const RegisterForm = ({ initRegister, status }) => {
                     <div className='flex flex-col space-y-6 items-center font-montserrat text-secondary'>
                         <div className='flex flex-col min-w-[90%]'>
                             <span className='items-start self-start mt-5 text-lg'>Hello...</span>
-                            <div className='flex flex-row min-w-full justify-between'>
+                            <div className='flex flex-row min-w-full justify-between mb-6'>
                                 <h1 className='text-3xl font-bold'>Register</h1>
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
