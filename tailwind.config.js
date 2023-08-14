@@ -12,6 +12,7 @@ export default {
         card: '#FFECAA',
         btnPrimary: '#FFDE69',
         primary: '#050522',
+        secondary: '#050522',
       },
       colors: {
         title: '#EF5858',

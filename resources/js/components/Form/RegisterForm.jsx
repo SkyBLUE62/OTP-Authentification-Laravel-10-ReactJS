@@ -25,6 +25,7 @@ const RegisterForm = () => {
                     </div>
 
                 </form>
+                <span className='text-base'> Already have account? <button className='text-danger font-semibolt'>Login</button> </span>
             </div>
         </div>
     )
