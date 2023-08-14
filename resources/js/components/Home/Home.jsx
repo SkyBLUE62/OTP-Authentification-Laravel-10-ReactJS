@@ -10,11 +10,15 @@ import 'animate.css/animate.min.css';
 
 const Home = () => {
     const [viewRegister, setViewRegister] = useState(false);
+    const [viewLogin, setViewLogin] = useState(false);
 
     const initRegister = () => {
         setViewRegister(!viewRegister)
     }
-
+    const initLogin = () => {
+        setViewLogin(!viewLogin)
+    }
+    
     return (
         <>
             <IconSVG />
@@ -23,10 +27,10 @@ const Home = () => {
 
             <div className='flex flex-col mt-10 space-y-6 animate__animated animate__fadeInUp'>
                 <BtnPrimary content='Create Account' onClick={initRegister} />
-                <BtnTransparent content='Login' />
+                <BtnTransparent content='Login' onClick={initLogin} />
             </div>
             {<RegisterForm status={viewRegister} initRegister={initRegister} />}
-            <LoginForm />
+            {<LoginForm status={viewLogin} initLogin={initLogin} />}
 
         </>
     )
