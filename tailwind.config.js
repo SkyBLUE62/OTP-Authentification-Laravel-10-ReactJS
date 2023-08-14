@@ -39,6 +39,7 @@ export default {
       },
       height: {
         160: '40rem',
+        128: '32rem'
       }
     },
     plugins: [],
