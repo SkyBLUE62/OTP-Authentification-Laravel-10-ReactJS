@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Home from './Home/Home';
 import Footer from './Footer/Footer';
+
 const App = () => {
+
     return (
         <div className='bg-primary h-screen w-screen shadow-xl'>
             <Home />
