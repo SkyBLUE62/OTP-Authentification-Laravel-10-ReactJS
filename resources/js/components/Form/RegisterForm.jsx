@@ -3,7 +3,8 @@ import { AiOutlineCloseCircle } from 'react-icons/ai';
 import BtnForm from '../Button/BtnForm';
 import RegisterInput from './Input/RegisterInput';
 import { useForm } from "react-hook-form"
-
+import axios from 'axios';
+import FormSuccess from '../../assets/video/FormSuccess.gif'
 const RegisterForm = ({ initRegister, status }) => {
     const {
         register,
@@ -17,8 +18,6 @@ const RegisterForm = ({ initRegister, status }) => {
     } = useForm()
     const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
-    const [formSubmitted, setFormSubmitted] = useState(false);
-
     const [fieldAnimations, setFieldAnimations] = useState({
         username: errors.username ? 'animate__shakeX' : '',
         email: errors.email ? 'animate__shakeX' : '',
@@ -26,6 +25,9 @@ const RegisterForm = ({ initRegister, status }) => {
         password: errors.password ? 'animate__shakeX' : '',
         confirmpass: errors.confirmpass ? 'animate__shakeX' : '',
     })
+    const [btnFormView, setBtnFormView] = useState(true);
+    const [successForm, setSuccessForm] = useState(false);
+    const [btnFormAnimation, setBtnFormAnimation] = useState('animate__zoomInDown animate__delay-1s')
 
     useEffect(() => {
         setFieldAnimations(prevFieldAnimations => ({
@@ -55,9 +57,22 @@ const RegisterForm = ({ initRegister, status }) => {
         }, 500);
     }
 
-    function onSubmit(data) {
-        console.log(data)
-        
+    async function onSubmit(data) {
+        console.log(data);
+        try {
+            const response = await axios.post('api/register', data);
+            console.log('Response:', response);
+
+            if (response.status === 200) {
+                setBtnFormAnimation('animate__zoomOutRight')
+                setTimeout(() => {
+                    setBtnFormView(false);
+                    setSuccessForm(true);
+                }, 500);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -80,13 +95,17 @@ const RegisterForm = ({ initRegister, status }) => {
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <div className='flex flex-col space-y-5'>
+                            <div className='flex flex-col space-y-5 w-80'>
                                 <RegisterInput errorAnimation={fieldAnimations.username} label='Username' id='username' name='username' type='text' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.email} label='Email' id='email' name='email' type='email' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.phone} label='Phone' id='phone' name='phone' type='tel' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.password} label='Password' id='password' name='password' type='password' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.confirmpass} label='Confirm Password' id='confirmpass' name='confirmpass' type='password' register={register} errors={errors} watch={watch} />
-                                <BtnForm type='submit'></BtnForm>
+
+                                <div className={`flex items-center justify-center`}>
+                                    {btnFormView && <BtnForm label='Register' animation={btnFormAnimation} />}
+                                    {successForm && <img src={FormSuccess} alt="" className='h-16 w-16 animate__animated animate__rollIn' />}
+                                </div>
                             </div>
                         </form>
                         <span className='text-base'>

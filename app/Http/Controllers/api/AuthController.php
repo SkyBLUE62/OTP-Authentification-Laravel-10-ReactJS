@@ -9,6 +9,6 @@ class AuthController extends Controller
 {
     public function register()
     {
-        
+        return response()->json(['message' => 'Formulaire soumis avec succès'], 200);
     }
 }
