@@ -18,7 +18,7 @@ const Home = () => {
     const initLogin = () => {
         setViewLogin(!viewLogin)
     }
-    
+
     return (
         <>
             <IconSVG />
@@ -29,8 +29,8 @@ const Home = () => {
                 <BtnPrimary content='Create Account' onClick={initRegister} />
                 <BtnTransparent content='Login' onClick={initLogin} />
             </div>
-            {<RegisterForm status={viewRegister} initRegister={initRegister} />}
-            {<LoginForm status={viewLogin} initLogin={initLogin} />}
+            {viewRegister && <RegisterForm status={viewRegister} initRegister={initRegister} />}
+            {viewLogin && <LoginForm status={viewLogin} initLogin={initLogin} />}
 
         </>
     )
