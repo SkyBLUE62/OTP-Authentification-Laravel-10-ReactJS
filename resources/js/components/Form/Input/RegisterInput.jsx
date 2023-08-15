@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { AiOutlineEye, AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
 import { BsPhone } from 'react-icons/bs';
-const RegisterInput = ({ label, name, type, register, errors, watch, ...props }) => {
+const RegisterInput = ({ label, name, type, register, errors, watch, onChange = undefined, ...props }) => {
 
     let validationRules = {};
     const inputRef = useRef(null);
@@ -21,7 +21,6 @@ const RegisterInput = ({ label, name, type, register, errors, watch, ...props })
             validationRules = {
                 required: `The field ${label} is required.`,
                 pattern: {
-                    value: /^\d{10}$/,
                     message: 'Please enter a valid phone number.',
                 },
             };
@@ -49,6 +48,7 @@ const RegisterInput = ({ label, name, type, register, errors, watch, ...props })
             </label>
             <div className='flex relative flex-row w-full h-full '>
                 <input
+                    onChange={onChange}
                     type={type}
                     {...register(name, validationRules)}
                     className='w-full h-full bg-transparent outline-none ml-3'

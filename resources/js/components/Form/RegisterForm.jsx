@@ -5,7 +5,9 @@ import RegisterInput from './Input/RegisterInput';
 import { useForm } from "react-hook-form"
 import axios from 'axios';
 import FormSuccess from '../../assets/video/FormSuccess.gif'
+
 const RegisterForm = ({ initRegister, status }) => {
+
     const {
         register,
         handleSubmit,
