@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { AiOutlineEye, AiOutlineLock, AiOutlineMail } from 'react-icons/ai';
 import { BsPhone } from 'react-icons/bs';
+
 const RegisterInput = ({ label, name, type, register, errors, watch, onChange = undefined, ...props }) => {
 
     let validationRules = {};
@@ -21,13 +22,18 @@ const RegisterInput = ({ label, name, type, register, errors, watch, onChange = 
             validationRules = {
                 required: `The field ${label} is required.`,
                 pattern: {
-                    message: 'Please enter a valid phone number.',
+                    value: /^\+\d+$/,
+                    message: 'Please enter a valid international telephone number.',
                 },
             };
             break;
         case 'password':
             validationRules = {
                 required: `The field ${label} is required.`,
+                minLength: {
+                    value: 8,
+                    message: 'The password must be at least 8 characters long.',
+                },
             };
             break;
         case 'confirmpass':

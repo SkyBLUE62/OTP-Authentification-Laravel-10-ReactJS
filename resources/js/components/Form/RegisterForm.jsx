@@ -5,6 +5,7 @@ import RegisterInput from './Input/RegisterInput';
 import { useForm } from "react-hook-form"
 import axios from 'axios';
 import FormSuccess from '../../assets/video/FormSuccess.gif'
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = ({ initRegister, status }) => {
 
@@ -30,6 +31,7 @@ const RegisterForm = ({ initRegister, status }) => {
     const [btnFormView, setBtnFormView] = useState(true);
     const [successForm, setSuccessForm] = useState(false);
     const [btnFormAnimation, setBtnFormAnimation] = useState('animate__zoomInDown animate__delay-1s')
+    const navigate = useNavigate();
 
     useEffect(() => {
         setFieldAnimations(prevFieldAnimations => ({
@@ -66,11 +68,16 @@ const RegisterForm = ({ initRegister, status }) => {
             console.log('Response:', response);
 
             if (response.status === 200) {
+                const { user } = response.data
                 setBtnFormAnimation('animate__zoomOutRight')
                 setTimeout(() => {
                     setBtnFormView(false);
                     setSuccessForm(true);
                 }, 500);
+                console.log(user.token)
+                setTimeout(() => {
+                    navigate(`/phone-validation/${user.token}`);
+                }, 1000);
             }
         } catch (error) {
             console.log(error);
