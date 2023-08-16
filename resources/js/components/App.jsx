@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import Home from './Home/Home';
-import Footer from './Footer/Footer';
-import Test from './test/test';
+import PhoneValidation from './OtpValidation/PhoneValidation';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Template from './Template/Template';
+
 const App = () => {
-
     return (
-        <div className='bg-primary h-screen w-screen shadow-xl'>
-            {/* <Home />
-            <Footer /> */}
-            <Test />
-        </div>
-
+        <Router>
+            <Routes>
+                <Route path="/" element={<Template><Home /></Template>} />
+                <Route path="/phone-validation/:token" element={<Template><PhoneValidation /></Template>} />
+            </Routes>
+        </Router>
     );
 }
 
