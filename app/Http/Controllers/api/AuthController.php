@@ -48,32 +48,46 @@ class AuthController extends Controller
 
     public function verify_code(Request $request)
     {
-        if (Session::has('user') && Session::has('code')) {
-            $dataUser = Session::get('user');
-            $code = Session::get('code');
-            if ($code == $request->input('code')) {
-                $user = new User();
-                $user->name = $dataUser->username;
-                $user->email = $dataUser->email;
-                $user->phone = $dataUser->phone;
-                $user->password = $dataUser->password;
-                $user->phone_verified_at = Carbon::now();
-                $user->save();
+        if ($request->has('code')) {
+            $inputCode = $request->input('code');
 
-                Auth::login($user, true);
-                $accessToken = $user->createToken('authToken')->plainTextToken;
-                $user = $user->withAccessToken($accessToken);
-                $cookie = Cookie::make('auth_token', $accessToken, 60);
-                return response()->json(['cookie' => $cookie], 200);
+            if (Session::has('user') && Session::has('code')) {
+                $dataUser = Session::get('user');
+                $code = Session::get('code');
+
+                if ($code == $inputCode) {
+                    $user = new User();
+                    $user->name = $dataUser['username'];
+                    $user->email = $dataUser['email'];
+                    $user->phone = $dataUser['phone'];
+                    $user->password = $dataUser['password'];
+                    $user->phone_verified_at = now();
+                    $user->save();
+
+                    Auth::login($user, true);
+                    $accessToken = $user->createToken('authToken')->plainTextToken;
+
+                    return response()->json(['message' => 'Compte créé', 'access_token' => $accessToken], 200);
+                } else {
+                    return response()->json(['message' => 'Code d\'authentification incorrect'], 401);
+                }
             } else {
-                return response()->json(['message' => 'Incorrect authentication code'], 401);
+                return response()->json(['message' => 'Utilisateur non trouvé'], 404);
             }
         } else {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'Code d\'authentification manquant'], 400);
         }
     }
 
 
+
+
+    /**
+     * Retrieves user data from the session.
+     *
+     * @throws Some_Exception_Class If the user data is not found in the session.
+     * @return Some_Return_Value JSON response containing the user data if found, or a message if not found.
+     */
     public function recup_userData()
     {
         if (Session::has('user')) {
@@ -84,19 +98,38 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Send an SMS with a verification code to the user's phone number.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function sendSMS()
     {
+        // Check if a user is logged in
         if (Session::has('user')) {
-            // Envoyer un code de vérification par SMS
+            // Get the user's information from the session
             $user = Session::get('user');
+
+            // Create a new Twilio client with the account SID and auth token from the environment variables
             $twilio = new Client(env('TWILIO_ACCOUNT_SID'), env('TWILIO_AUTH_TOKEN'));
+
+            // Generate a random 6-digit verification code
             $code = mt_rand(100000, 999999);
+
+            // Store the verification code in the session
             Session::put('code', $code);
+
+            // Create the message body with the verification code
             $message = "Votre code de vérification est : $code";
-            $message = $twilio->messages->create($user['phone'], ['from' => env('TWILIO_FROM'), 'body' => $message]);
-            return response()->json(['message' => 'Code Send'], 200);
+
+            // Send the SMS message using Twilio
+            // $twilio->messages->create($user['phone'], ['from' => env('TWILIO_FROM'), 'body' => $message]);
+
+            // Return a JSON response indicating that the code has been sent
+            return response()->json(['code' => $code], 200);
         } else {
-            return response()->json(['message' => 'User not found'], 404); // Correction ici
+            // Return a JSON response indicating that the user was not found
+            return response()->json(['message' => 'User not found'], 404);
         }
     }
 }
