@@ -24,6 +24,7 @@ const PhoneValidation = () => {
 
     const [inputValues, setInputValues] = useState(['', '', '', '', '', '']);
     const [phone, setPhone] = useState('')
+    const [code, setCode] = useState('')
 
     const handleInputChange = (event, index) => {
         const newValue = event.target.value.slice(0, 1);
@@ -69,29 +70,31 @@ const PhoneValidation = () => {
 
 
     const sendSMS = async () => {
-        // const sendSMS = await axios.get('/api/sendSMS');
+        const sendSMS = await axios.get('/api/sendSMS');
+        setCode(sendSMS.data.code);
     }
 
-    const onSubmit = async (data) => {
-        console.log(data)
+    const onSubmit = async () => {
         const code = inputValues.join('');
-        code = JSON.stringify(code);
-        console.log(code)
+
         try {
+            const response = await axios.post('/api/verify_code', { code }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-            const response = await axios.post('/api/verify_code', code);
-
-            if (response.statue == 200) {
-                console.log('Account Crée')
+            if (response.status === 200) {
+                console.log('Compte créé');
             } else {
-                console.log('Mauvais code')
+                console.log('Code incorrect');
             }
-
         } catch (error) {
-            console.log(error)
+            console.error('Erreur lors de la requête:', error);
         }
+    };
 
-    }
+
 
     return (
         <div className='flex flex-col mx-auto justify-center items-center font-montserrat mt-5'>
@@ -119,7 +122,7 @@ const PhoneValidation = () => {
                         <span className='font-semibold text-sm flex justify-center'>{countdown} sec</span>
                         <span className='flex flex-row space-y-2 items-center'> Don’t receive code ?&nbsp;  <TimerButton countdown={countdown} setCountdown={setCountdown} sendSMS={sendSMS} /></span>
                     </div>
-
+                    {code != '' ? <span>Code : {code}</span> : null}
                     <button type="submit" className='bg-secondary mt-5 items-center justify-center flex text-primary font-montserrat text-lg mx-auto font-semibold h-10 w-40 rounded-2xl shadow-2xl'>
                         Submit
                     </button>
