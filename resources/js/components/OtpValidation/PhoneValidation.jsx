@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TimerButton from '../Button/TimerButton';
 import axios from 'axios';
 import { useForm } from "react-hook-form"
-import Cookies from 'js-cookie';
 
 const PhoneValidation = () => {
     // Récupère le paramètre "token" depuis l'URL
