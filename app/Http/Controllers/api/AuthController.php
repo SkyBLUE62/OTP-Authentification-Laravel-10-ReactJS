@@ -132,4 +132,13 @@ class AuthController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
     }
+
+    public function authCheck()
+    {
+        if (Auth::check()) {
+            return response()->json(['user' => Auth::user()], 200);
+        } else {
+            return response()->json(['isLoggedIn' => false], 401);
+        }
+    }
 }
