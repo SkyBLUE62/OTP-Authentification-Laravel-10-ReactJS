@@ -31,6 +31,7 @@ const RegisterForm = ({ initRegister, status }) => {
     const [btnFormView, setBtnFormView] = useState(true);
     const [successForm, setSuccessForm] = useState(false);
     const [btnFormAnimation, setBtnFormAnimation] = useState('animate__zoomInDown animate__delay-1s')
+    const [msgError, setMsgError] = useState('')
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -63,31 +64,42 @@ const RegisterForm = ({ initRegister, status }) => {
 
     async function onSubmit(data) {
         console.log(data);
+
         try {
             const response = await axios.post('api/register', data);
             console.log('Response:', response);
 
             if (response.status === 200) {
-                const { user } = response.data
-                setBtnFormAnimation('animate__zoomOutRight')
+                const { user } = response.data;
+                setBtnFormAnimation('animate__zoomOutRight');
                 setTimeout(() => {
                     setBtnFormView(false);
                     setSuccessForm(true);
                 }, 500);
-                console.log(user.token)
+                console.log(user.token);
                 setTimeout(() => {
                     navigate(`/phone-validation/${user.token}`);
                 }, 1000);
             }
         } catch (error) {
-            console.log(error);
+            if (error.response && error.response.status === 422) {
+                const { inputError, msgError } = error.response.data;
+                console.log(inputError);
+                if (inputError) {
+                    setMsgError(msgError);
+                    console.log(msgError)
+                }
+            } else {
+                console.log(error);
+            }
         }
     }
+
 
     return (
         <>
             {view && (
-                <div className={`bg-card ${animation} absolute rounded-t-3xl h-160 md:max-w-2xl z-50 bottom-0 left-0 right-0 mx-auto`}>
+                <div className={`bg-card ${animation} absolute rounded-t-3xl h-160  md:max-w-2xl z-50 bottom-0 left-0 right-0 mx-auto md:bottom-40 md:rounded-3xl`}>
                     <div className='flex flex-col space-y-6 items-center font-montserrat text-secondary'>
                         <div className='flex flex-col min-w-[90%]'>
                             <span className='items-start self-start mt-5 text-lg'>Hello...</span>
@@ -100,7 +112,7 @@ const RegisterForm = ({ initRegister, status }) => {
                             {errors.phone && <span className='text-xs text-danger '>{errors.phone.message}</span>}
                             {errors.password && <span className='text-xs text-danger '>{errors.password.message}</span>}
                             {errors.confirmpass && <span className='text-xs text-danger '>{errors.confirmpass.message}</span>}
-
+                            {msgError !== '' && <span className='text-xs text-danger '>{msgError}</span>}
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
