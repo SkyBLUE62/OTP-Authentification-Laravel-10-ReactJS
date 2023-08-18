@@ -24,13 +24,22 @@ class AuthController extends Controller
         $confirmpass = $request->input('confirmpass');
 
         if (User::where('name', $username)->exists()) {
-            return response()->json(['error' => 'This username already exists please choose another one'], 422);
+            return response()->json([
+                'msgError' => 'This username already exists please choose another one',
+                'inputError' => 'username',
+            ], 422);
         }
         if (User::where('phone', $phone)->exists()) {
-            return response()->json(['error' => 'This telephone number is already assigned to an account'], 422);
+            return response()->json([
+                'msgError' => 'This telephone number is already assigned to an account',
+                'inputError' => 'phone',
+            ], 422);
         }
         if (User::where('email', $email)->exists()) {
-            return response()->json(['error' => 'This email is already assigned to an account'], 422);
+            return response()->json([
+                'msgError' => 'This email is already assigned to an account',
+                'inputError' => 'email',
+            ], 422);
         }
 
         $dataUser = [
@@ -66,7 +75,7 @@ class AuthController extends Controller
 
                     Auth::login($user, true);
                     $accessToken = $user->createToken('authToken')->plainTextToken;
-
+                    Session::forget('user');
                     return response()->json(['message' => 'Compte créé', 'access_token' => $accessToken], 200);
                 } else {
                     return response()->json(['message' => 'Code d\'authentification incorrect'], 401);
@@ -91,10 +100,25 @@ class AuthController extends Controller
     public function recup_userData()
     {
         if (Session::has('user')) {
-            $user = Session::get('user'); // Utilisez 'user' au lieu de 'users'
+            $user = Session::get('user');
             return response()->json(['user' => $user], 200);
         } else {
             return response()->json(['message' => 'User not Found'], 404);
+        }
+    }
+
+    public function verify_token(Request $request)
+    {
+        if ($request->has('token') && Session::has('user')) {
+            $token = $request->input('token');
+            $user = Session::get('user');
+            if ($token == $user['token']) {
+                return response()->json(['message' => 'Token valide'], 200);
+            } else {
+                return response()->json(['message' => 'Token not valide'], 401);
+            }
+        } else {
+            return response()->json(['message' => 'User or Token not exist'], 401);
         }
     }
 
