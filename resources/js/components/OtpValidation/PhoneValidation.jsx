@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TimerButton from '../Button/TimerButton';
 import axios from 'axios';
 import { useForm } from "react-hook-form"
+import Cookies from 'js-cookie';
 
 const PhoneValidation = () => {
     // Récupère le paramètre "token" depuis l'URL
@@ -83,9 +84,9 @@ const PhoneValidation = () => {
                     'Content-Type': 'application/json',
                 },
             });
-
             if (response.status === 200) {
                 console.log('Compte créé');
+                localStorage.setItem('authToken', response.data.access_token);
             } else {
                 console.log('Code incorrect');
             }

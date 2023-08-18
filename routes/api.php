@@ -23,3 +23,4 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::get('/dataUser', [AuthController::class, 'recup_userData']);
 Route::get('/sendSMS', [AuthController::class, 'sendSMS']);
 Route::post('/verify_code', [AuthController::class, 'verify_code']);
+Route::get('/authCheck', [AuthController::class, 'authCheck']);
