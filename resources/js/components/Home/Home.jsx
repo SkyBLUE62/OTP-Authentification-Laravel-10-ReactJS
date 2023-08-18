@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MainTitle from '../Title/MainTitle'
 import HomeDescription from '../Content/HomeDescription'
 import BtnPrimary from '../Button/BtnPrimary'
@@ -7,7 +7,7 @@ import RegisterForm from '../Form/RegisterForm';
 import LoginForm from '../Form/LoginForm'
 import 'animate.css/animate.min.css';
 import { useLocation } from 'react-router-dom';
-
+import AuthCheck from '../utils/AuthCheck'
 
 
 const Home = () => {
@@ -15,6 +15,7 @@ const Home = () => {
     const [viewLogin, setViewLogin] = useState(false);
     const location = useLocation();
     const errorMessage = location.state?.errorMessage;
+    const [user, setUser] = useState(false)
 
     const initRegister = () => {
         setViewRegister(!viewRegister)
@@ -23,9 +24,17 @@ const Home = () => {
         setViewLogin(!viewLogin)
     }
 
+    useEffect(() => {
+        async function fetchData() {
+            const isAuthenticated = await AuthCheck();
+            setUser(isAuthenticated);
+        }
+        fetchData();
+    }, []);
+
     return (
         <>
-            <MainTitle content='Welcome' animation='animate__animated animate__fadeInUp' />
+            <MainTitle content='Welcome' user={user} animation='animate__animated animate__fadeInUp' />
             <HomeDescription animation="animate__animated animate__fadeInUp" />
 
             {errorMessage && <div className="error-message">{errorMessage}</div>}
