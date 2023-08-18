@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 const AuthCheck = async () => {
     try {
         const response = await axios.get('/api/authCheck');
