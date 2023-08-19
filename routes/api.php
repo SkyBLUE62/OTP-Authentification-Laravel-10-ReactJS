@@ -19,9 +19,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/register', [AuthController::class, 'register']);
 Route::get('/dataUser', [AuthController::class, 'recup_userData']);
 Route::get('/sendSMS', [AuthController::class, 'sendSMS']);
-Route::post('/verify_code', [AuthController::class, 'verify_code']);
 Route::get('/authCheck', [AuthController::class, 'authCheck']);
+Route::get('/logout', [AuthController::class, 'logout']);
+
+Route::post('/setDataUser', [AuthController::class, 'setDataUser']);
+Route::post('/verify_code', [AuthController::class, 'verify_code']);
 Route::post('/verify_token', [AuthController::class, 'verify_token']);
+Route::post('/verify_user', [AuthController::class, 'verify_user']);
