@@ -28,6 +28,7 @@ const RegisterForm = ({ initRegister, status }) => {
         password: errors.password ? 'animate__shakeX' : '',
         confirmpass: errors.confirmpass ? 'animate__shakeX' : '',
     })
+
     const [btnFormView, setBtnFormView] = useState(true);
     const [successForm, setSuccessForm] = useState(false);
     const [btnFormAnimation, setBtnFormAnimation] = useState('animate__zoomInDown animate__delay-1s')
@@ -55,6 +56,7 @@ const RegisterForm = ({ initRegister, status }) => {
 
     const handleClose = () => {
         setAnimation('animate__animated animate__backOutDown');
+
         setTimeout(() => {
             setView(false);
             initRegister();
@@ -66,28 +68,37 @@ const RegisterForm = ({ initRegister, status }) => {
         console.log(data);
 
         try {
-            const response = await axios.post('api/register', data);
+            const response = await axios.post('api/setDataUser', data);
             console.log('Response:', response);
 
             if (response.status === 200) {
-                const { user } = response.data;
+                const { user, token } = response.data;
+
+                // Animate the form button out
                 setBtnFormAnimation('animate__zoomOutRight');
+
+                // Hide the form button and show success message
                 setTimeout(() => {
                     setBtnFormView(false);
                     setSuccessForm(true);
                 }, 500);
-                console.log(user.token);
+
+                console.log(token);
+
+                // Redirect to phone validation page after a delay
                 setTimeout(() => {
-                    navigate(`/phone-validation/${user.token}`);
+                    navigate(`/phone-validation/${token}`);
                 }, 1000);
             }
         } catch (error) {
             if (error.response && error.response.status === 422) {
                 const { inputError, msgError } = error.response.data;
+
                 console.log(inputError);
+
                 if (inputError) {
                     setMsgError(msgError);
-                    console.log(msgError)
+                    console.log(msgError);
                 }
             } else {
                 console.log(error);
