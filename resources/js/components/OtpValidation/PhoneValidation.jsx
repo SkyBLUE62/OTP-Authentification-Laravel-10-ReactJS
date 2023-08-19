@@ -11,25 +11,16 @@ const PhoneValidation = () => {
     const navigate = useNavigate();
     const numInputs = 6; // Nombre d'inputs
     const inputRefs = Array.from({ length: numInputs }, () => useRef(null));
-    const [countdown, setCountdown] = useState(120); // Initialisation à 120 secondes
+    const [countdown, setCountdown] = useState(120);
     const [AnimationCard, setAnimationCard] = useState('animate__bounceInLeft')
     const [AnimationBtn, setAnimationBtn] = useState('animate__zoomInDown animate__delay-1s')
     const [btnRendu, setBtnRendu] = useState(true)
 
-    const {
-        register,
-        handleSubmit,
-        watch,
-        clearErrors,
-        reset,
-        formState,
-        formState: { errors, isSubmitSuccessful },
-
-    } = useForm()
     const [renduView, setRenduView] = useState(false)
     const [inputValues, setInputValues] = useState(['', '', '', '', '', '']);
     const [phone, setPhone] = useState('')
     const [code, setCode] = useState('')
+    const [AnimationInput, setAnimationInput] = useState('')
     const handleInputChange = (event, index) => {
         const newValue = event.target.value.slice(0, 1);
         const newInputValues = [...inputValues];
@@ -54,33 +45,34 @@ const PhoneValidation = () => {
         try {
             const response = await axios.post('/api/verify_token', { token });
             if (response.status == 401) {
-                navigate('/', "User not Found, Please try to register again ")
+                // navigate('/', "User not Found, Please try to register again ")
             } else if (response.status == 200) {
                 setRenduView(true)
-            }
-        } catch (error) {
-
-            navigate('/', "User not Found, Please try to register again ")
-        }
-
-        try {
-            const response = await axios.get('/api/dataUser');
-            if (response.status == 200) {
-                const user = response.data.user;
-                console.log(response);
-                setPhone(user.phone);
                 try {
-                    sendSMS()
+                    const response = await axios.get('/api/dataUser');
+                    if (response.status == 200) {
+                        const user = response.data.user;
+                        console.log(response);
+                        setPhone(user.phone);
+                        try {
+                            sendSMS()
+                        } catch (error) {
+                            return Promise.reject(error);
+                        }
+                    } else {
+                        navigate('/', "User not Found, Please try to register again ")
+                    }
+
                 } catch (error) {
                     return Promise.reject(error);
                 }
-            } else {
-                navigate('/', "User not Found, Please try to register again ")
             }
-
         } catch (error) {
-            return Promise.reject(error);
+            console.log(error)
+            // navigate('/', "User not Found, Please try to register again ")
         }
+
+
     }
 
     const sendSMS = async () => {
@@ -88,7 +80,8 @@ const PhoneValidation = () => {
         setCode(sendSMS.data.code);
     }
 
-    const onSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         const code = inputValues.join('');
 
         try {
@@ -97,38 +90,48 @@ const PhoneValidation = () => {
                     'Content-Type': 'application/json',
                 },
             });
+
             if (response.status === 200) {
-                console.log('Compte créé');
+                console.log(response);
                 localStorage.setItem('authToken', response.data.access_token);
-                setAnimationBtn('animate__bounceOutRight')
+                setAnimationBtn('animate__bounceOutRight');
                 setInterval(() => {
-                    setBtnRendu(false)
+                    setBtnRendu(false);
                 }, 1000);
-                // setInterval(() => {
-                //     navigate('/')
-                // }, 3000);
+                setInterval(() => {
+                    navigate('/')
+                }, 2000);
             } else {
-                console.log('Code incorrect');
+                console.log('Statut de réponse non géré:', response.status);
             }
         } catch (error) {
-            console.error('Erreur lors de la requête:', error);
+            if (error.response && error.response.status === 401) {
+                setInputValues(['', '', '', '', '', '']);
+                setAnimationInput('animate__shakeX');
+                setTimeout(() => {
+                    setAnimationInput('')
+                }, 1000);
+            } else {
+                console.error('Erreur lors de la requête:', error);
+            }
         }
+
     };
 
 
 
     return (
         renduView && (
-            <div className={`flex animate__animated ${AnimationCard} flex-col mx-auto justify-center items-center font-montserrat mt-5`}>
-                <div className='bg-card w-80 h-64 rounded-3xl flex flex-col'>
+            <div className={`flex animate__animated overflow-hidden ${AnimationCard} flex-col mx-auto justify-center items-center font-montserrat mt-5`}>
+                <div className='bg-card w-80 h-64 rounded-3xl flex flex-col overflow-hidden'>
                     <div className='flex flex-col items-center justify-center'>
                         <h1 className='mt-2 text-lg text-secondary font-semibold '>Enter the OTP sent to </h1>
                         <span>{phone}</span>
                     </div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <div className='flex flex-row justify-around mt-5'>
+                    <form onSubmit={handleSubmit}>
+                        <div className={`flex flex-row justify-around mt-5 animate__animated ${AnimationInput}`}>
                             {inputValues.map((value, index) => (
-                                <div key={index} className='bg-[#F6F6F6] box-shadow-inset-2 h-10 w-10 rounded-xl overflow-hidden'>
+                                <div key={index} className={`bg-[#F6F6F6] box-shadow-inset-2  h-10 w-10 rounded-xl overflow-hidden`}>
                                     <input
                                         ref={inputRefs[index]}
                                         className='text-center appearance-none w-full h-full outline-none bg-transparent'
@@ -136,6 +139,7 @@ const PhoneValidation = () => {
                                         value={value}
                                         onChange={(event) => handleInputChange(event, index)}
                                         onKeyDown={(event) => handleInputKeyDown(event, index)}
+                                        required
                                     />
                                 </div>
                             ))}
@@ -148,7 +152,15 @@ const PhoneValidation = () => {
                         {btnRendu && <button type="submit" className={`bg-secondary animate__animated ${AnimationBtn} mt-5 items-center justify-center flex text-primary font-montserrat text-lg mx-auto font-semibold h-10 w-40 rounded-2xl shadow-2xl`}>
                             Submit
                         </button>}
-                        {!btnRendu && <img src={FormSuccess} alt="" srcset="" className='h-16 w-16 animate__animated animate__rollIn flex justify-center items-center text-center' />}
+                        {!btnRendu && (
+                            <div className="flex justify-center items-center">
+                                <img
+                                    src={FormSuccess}
+                                    alt=""
+                                    className="h-16 w-16 animate__animated animate__rollIn"
+                                />
+                            </div>
+                        )}
                     </form>
                 </div>
             </div>
