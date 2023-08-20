@@ -66,6 +66,19 @@ class AuthController extends Controller
         if ($request->has('code')) {
             $inputCode = $request->input('code');
 
+            if (Session::has('reset_password') && Session::has('user') && Session::has('code')) {
+                $dataUser = Session::get('user');
+                $code = Session::get('code');
+                if ($code == $inputCode) {
+                    Session::forget('code');
+                    $token = Str::random(60);
+                    Session::put('token', $token);
+                    return response()->json(['message' => 'Code d\'authentification correct', 'token' => $token], 200);
+                } else {
+                    return response()->json(['message' => 'Code d\'authentification correct'], 401);
+                }
+            }
+
             // Check if the user and code are stored in the session
             if (Session::has('user') && Session::has('code')) {
                 $dataUser = Session::get('user');
@@ -255,6 +268,24 @@ class AuthController extends Controller
             return response()->json(['message' => 'Logout'], 200);
         } else {
             return response()->json(['message' => 'Not Logged'], 401);
+        }
+    }
+
+    public function checkForgotPassword(Request $request)
+    {
+
+        $username = $request->input('username');
+        $phone = $request->input('phone');
+
+        if (User::where(['name' => $username, 'phone' => $phone])->exists()) {
+            $user = User::where(['name' => $username, 'phone' => $phone])->first();
+            $token = Str::random(60);
+            Session::put('user', $user);
+            Session::put('token', $token);
+            Session::put('reset_password', true);
+            return response()->json(['message' => 'User found', 'token' => $token], 200);
+        } else {
+            return response()->json(['message' => 'User not found'], 404);
         }
     }
 }
