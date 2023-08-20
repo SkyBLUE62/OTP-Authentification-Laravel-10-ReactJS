@@ -6,9 +6,15 @@ import { useForm } from "react-hook-form"
 import FormSuccess from '../../assets/video/FormSuccess.gif'
 
 const PhoneValidation = () => {
-    // Récupère le paramètre "token" depuis l'URL
-    const { token } = useParams();
+
     const navigate = useNavigate();
+    const { token } = useParams();
+
+    if (token === undefined || token === null || token === '') {
+        navigate('/');
+        return null;
+    }
+
     const numInputs = 6; // Nombre d'inputs
     const inputRefs = Array.from({ length: numInputs }, () => useRef(null));
     const [countdown, setCountdown] = useState(120);
@@ -41,6 +47,7 @@ const PhoneValidation = () => {
     useEffect(() => {
         checkUser()
     }, [])
+
     const checkUser = async () => {
         try {
             const response = await axios.post('/api/verify_token', { token });
@@ -71,8 +78,6 @@ const PhoneValidation = () => {
             console.log(error)
             // navigate('/', "User not Found, Please try to register again ")
         }
-
-
     }
 
     const sendSMS = async () => {
