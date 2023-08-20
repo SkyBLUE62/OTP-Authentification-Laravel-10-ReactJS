@@ -135,7 +135,7 @@ const RegisterForm = ({ initRegister, status }) => {
                                 <RegisterInput errorAnimation={fieldAnimations.confirmpass} label='Confirm Password' id='confirmpass' name='confirmpass' type='password' register={register} errors={errors} watch={watch} />
 
                                 <div className={`flex items-center justify-center`}>
-                                    {btnFormView && <BtnForm label='Register' animation={btnFormAnimation} />}
+                                    {btnFormView && <BtnForm content='Register' animation={btnFormAnimation} />}
                                     {successForm && <img src={FormSuccess} alt="" className='h-16 w-16 animate__animated animate__rollIn' />}
                                 </div>
                             </div>
