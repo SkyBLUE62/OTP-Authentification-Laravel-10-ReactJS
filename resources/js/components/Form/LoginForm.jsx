@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import FormSuccess from '../../assets/video/FormSuccess.gif'
 
-const LoginForm = ({ status, initLogin }) => {
+const LoginForm = ({ status, initLogin, initRegister }) => {
     const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
     const [msgError, setMsgError] = useState('')
@@ -30,13 +30,13 @@ const LoginForm = ({ status, initLogin }) => {
         if (status === true) {
             console.log('true')
             setView(true);
-            setAnimation('animate__animated animate__backInUp');
+            setAnimation('animate__backInUp');
             document.body.style.overflow = 'hidden';
         }
     }, [status]);
 
     const handleClose = () => {
-        setAnimation('animate__animated animate__backOutDown');
+        setAnimation('animate__backOutDown');
         setTimeout(() => {
             setView(false);
             initLogin();
@@ -70,11 +70,20 @@ const LoginForm = ({ status, initLogin }) => {
             }, 1000);
         }
     }
-
+    const handleChangeForm = () => {
+        setAnimation('animate__backOutDown');
+        setTimeout(() => {
+            setTimeout(() => {
+                initLogin();
+            }, 1000);
+            initRegister();
+        }, 1000);
+    }
+    
     return (
         <>
             {view == true ?
-                <div className={`bg-card absolute ${animation} rounded-t-3xl h-128 md:max-w-2xl z-50 bottom-0 md:bottom-40 md:rounded-3xl left-0 right-0 mx-auto`}>
+                <div className={`bg-card absolute ${animation} animate__animated rounded-t-3xl h-128 md:max-w-2xl z-50 bottom-0 md:bottom-40 md:rounded-3xl left-0 right-0 mx-auto`}>
                     <div className='flex flex-col space-y-6 items-center font-montserrat text-secondary'>
                         <div className='flex flex-col min-w-[90%]'>
                             <span className='items-start self-start mt-5 text-lg'>Welcome Back !</span>
@@ -111,7 +120,7 @@ const LoginForm = ({ status, initLogin }) => {
                         </form>
 
                         <span className='text-base'>
-                            Don’t have an account? <button className='text-danger font-semibold'>Register</button>
+                            Don’t have an account? <button className='text-danger font-semibold' onClick={handleChangeForm}>Register</button>
                         </span>
                     </div>
                 </div>

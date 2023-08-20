@@ -6,15 +6,16 @@ import BtnTransparent from '../Button/BtnTransparent'
 import RegisterForm from '../Form/RegisterForm';
 import LoginForm from '../Form/LoginForm'
 import 'animate.css/animate.min.css';
-import { useLocation } from 'react-router-dom';
 import AuthCheck from '../utils/AuthCheck'
-
+import ForgotPassword from '../Form/ForgotPassword'
+import ResetPasswordForm from '../Form/ResetPasswordForm';
 
 const Home = () => {
     const [viewRendu, setViewRendu] = useState(false)
     const [viewRegister, setViewRegister] = useState(false);
     const [viewLogin, setViewLogin] = useState(false);
     const [viewLogout, setViewLogout] = useState(false);
+    const [viewForgotPassword, setviewForgotPassword] = useState(false)
     const errorMessage = location.state?.errorMessage;
     const [user, setUser] = useState(false)
     const [animationUsername, setAnimationUsername] = useState('')
@@ -82,9 +83,10 @@ const Home = () => {
                     ) : <BtnPrimary content='Logout' onClick={initLogout} className={`animate__animated ${animationBtnLogout}`} />}
 
                 </div>
-                {viewRegister && <RegisterForm status={viewRegister} initRegister={initRegister} />}
-                {viewLogin && <LoginForm status={viewLogin} initLogin={initLogin} />}
-
+                {viewRegister && <RegisterForm status={viewRegister} initRegister={initRegister} initLogin={initLogin} />}
+                {viewLogin && <LoginForm status={viewLogin} initLogin={initLogin} initRegister={initRegister} />}
+                {viewForgotPassword && <ForgotPassword />}
+                <ResetPasswordForm />
             </>
         )
     )

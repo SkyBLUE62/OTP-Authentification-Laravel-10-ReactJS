@@ -7,7 +7,7 @@ import axios from 'axios';
 import FormSuccess from '../../assets/video/FormSuccess.gif'
 import { useNavigate } from 'react-router-dom';
 
-const RegisterForm = ({ initRegister, status }) => {
+const RegisterForm = ({ initRegister, status, initLogin }) => {
 
     const {
         register,
@@ -65,8 +65,6 @@ const RegisterForm = ({ initRegister, status }) => {
     }
 
     async function onSubmit(data) {
-        console.log(data);
-
         try {
             const response = await axios.post('api/setDataUser', data);
             console.log('Response:', response);
@@ -106,11 +104,21 @@ const RegisterForm = ({ initRegister, status }) => {
         }
     }
 
+    const handleChangeForm = () => {
+        setAnimation('animate__backOutDown');
+        setTimeout(() => {
+            setTimeout(() => {
+                initRegister();
+            }, 1000);
+            initLogin();
+        }, 1000);
+    }
+    
 
     return (
         <>
             {view && (
-                <div className={`bg-card ${animation} absolute rounded-t-3xl h-160  md:max-w-2xl z-50 bottom-0 left-0 right-0 mx-auto md:bottom-40 md:rounded-3xl`}>
+                <div className={`bg-card ${animation} animate__animated absolute rounded-t-3xl h-160  md:max-w-2xl z-50 bottom-0 left-0 right-0 mx-auto md:bottom-40 md:rounded-3xl`}>
                     <div className='flex flex-col space-y-6 items-center font-montserrat text-secondary'>
                         <div className='flex flex-col min-w-[90%]'>
                             <span className='items-start self-start mt-5 text-lg'>Hello...</span>
@@ -141,7 +149,7 @@ const RegisterForm = ({ initRegister, status }) => {
                             </div>
                         </form>
                         <span className='text-base'>
-                            Already have an account? <button className='text-danger font-semibold'>Login</button>
+                            Already have an account? <button className='text-danger font-semibold' onClick={handleChangeForm}>Login</button>
                         </span>
                     </div>
                 </div>
