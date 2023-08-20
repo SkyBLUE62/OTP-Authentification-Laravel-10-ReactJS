@@ -17,7 +17,9 @@ const Home = () => {
     const [viewLogout, setViewLogout] = useState(false);
     const errorMessage = location.state?.errorMessage;
     const [user, setUser] = useState(false)
-
+    const [animationUsername, setAnimationUsername] = useState('')
+    const [animationBtnAuth, setAnimationBtnAuth] = useState('')
+    const [animationBtnLogout, setAnimationBtnLogout] = useState('')
     const initRegister = () => {
         setViewRegister(!viewRegister);
     };
@@ -30,8 +32,13 @@ const Home = () => {
         try {
             const response = await axios.get('/api/logout');
             if (response.status === 200) {
-                setUser(false)
-                setViewLogout(false)
+                setAnimationUsername('animate__fadeOut')
+                setAnimationBtnLogout('animate__bounceOutRight')
+                setTimeout(() => {
+                    setAnimationBtnAuth('animate__fadeInUp')
+                    setUser(false)
+                    setViewLogout(false)
+                }, 1000);
             }
         } catch (error) {
             console.log(error);
@@ -62,17 +69,17 @@ const Home = () => {
     return (
         viewRendu && (
             <>
-                <MainTitle content='Welcome' user={user} animation='animate__animated animate__fadeInUp' />
+                <MainTitle animationUsername={animationUsername} content='Welcome' user={user} animation='animate__animated' />
                 <HomeDescription animation="animate__animated animate__fadeInUp" />
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
 
-                <div className='flex flex-col mt-10 space-y-6 animate__animated animate__fadeInUp'>
+                <div className={`flex flex-col mt-10 space-y-6 animate__animated animate__fadeInUp`}>
                     {!viewLogout ? (
                         <>
-                            <BtnPrimary content='Create Account' onClick={initRegister} />
-                            <BtnTransparent content='Login' onClick={initLogin} />
+                            <BtnPrimary content='Create Account' onClick={initRegister} className={`animate__animated ${animationBtnAuth}`} />
+                            <BtnTransparent content='Login' onClick={initLogin} className={`animate__animated ${animationBtnAuth}`} />
                         </>
-                    ) : <BtnPrimary content='Logout' onClick={initLogout} className={'animate__animated animate__fadeInUp'} />}
+                    ) : <BtnPrimary content='Logout' onClick={initLogout} className={`animate__animated ${animationBtnLogout}`} />}
 
                 </div>
                 {viewRegister && <RegisterForm status={viewRegister} initRegister={initRegister} />}
