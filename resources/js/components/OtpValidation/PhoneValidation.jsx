@@ -76,8 +76,14 @@ const PhoneValidation = () => {
     }
 
     const sendSMS = async () => {
-        const sendSMS = await axios.get('/api/sendSMS');
-        setCode(sendSMS.data.code);
+        try {
+            const sendSMS = await axios.get('/api/sendSMS');
+            if (sendSMS.status === 200) {
+                setCode(sendSMS.data.code);
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     const handleSubmit = async (e) => {
@@ -94,13 +100,15 @@ const PhoneValidation = () => {
             if (response.status === 200) {
                 console.log(response);
                 localStorage.setItem('authToken', response.data.access_token);
+
                 setAnimationBtn('animate__bounceOutRight');
-                setInterval(() => {
+                setTimeout(() => {
                     setBtnRendu(false);
+
+                    setTimeout(() => {
+                        navigate('/');
+                    }, 1000);
                 }, 1000);
-                setInterval(() => {
-                    navigate('/')
-                }, 2000);
             } else {
                 console.log('Statut de réponse non géré:', response.status);
             }

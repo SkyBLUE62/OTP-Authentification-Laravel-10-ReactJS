@@ -50,12 +50,12 @@ const LoginForm = ({ status, initLogin }) => {
             if (response.status === 200 && response.data.token != 'null') {
                 setBtnFormAnimation('animate__zoomOutRight')
                 console.log(response.data.token)
-                setInterval(() => {
+                setTimeout(() => {
                     setBtnView(false)
                     setSuccessForm(true);
                 }, 1000);
                 console.log(response.data.token)
-                setInterval(() => {
+                setTimeout(() => {
                     const token = response.data.token
                     navigate(`/phone-validation/${token}`);
                 }, 2000);
@@ -65,7 +65,7 @@ const LoginForm = ({ status, initLogin }) => {
             setMsgError('Incorrect username or password')
             reset({ password: '' });
             setAnimationInput('animate__shakeX');
-            setInterval(() => {
+            setTimeout(() => {
                 setAnimationInput('');
             }, 1000);
         }
@@ -101,7 +101,7 @@ const LoginForm = ({ status, initLogin }) => {
                                     </div>
                                     <button className='text-xs'>Forgot Password ?</button>
                                 </div>
-                                {btnView && <BtnForm animation={btnFormAnimation} />}
+                                {btnView && <BtnForm content="Login" animation={btnFormAnimation} />}
                                 {successForm && (
                                     <div className='flex items-center justify-center'>
                                         <img src={FormSuccess} alt="" className='h-16 w-16 animate__animated animate__rollIn' />
