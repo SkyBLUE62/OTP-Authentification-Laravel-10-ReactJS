@@ -28,3 +28,5 @@ Route::post('/setDataUser', [AuthController::class, 'setDataUser']);
 Route::post('/verify_code', [AuthController::class, 'verify_code']);
 Route::post('/verify_token', [AuthController::class, 'verify_token']);
 Route::post('/verify_user', [AuthController::class, 'verify_user']);
+Route::post('/checkForgotPassword', [AuthController::class, 'checkForgotPassword']);
+
