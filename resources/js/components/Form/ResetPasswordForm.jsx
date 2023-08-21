@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 
 const ResetPasswordForm = () => {
-    const [view, setView] = useState(true);
+    const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
     const [msgError, setMsgError] = useState('')
     const navigate = useNavigate();
@@ -30,26 +30,56 @@ const ResetPasswordForm = () => {
 
     } = useForm()
 
+    useEffect(() => {
+        checkUser()
+    }, [token])
+
     const handleClose = () => {
         setAnimation('animate__backOutDown');
         setTimeout(() => {
+            navigate('/')
             setView(false);
-            initLogin();
             document.body.style.overflow = 'auto';
         }, 500);
     }
 
+
     const checkUser = async () => {
 
         try {
-            const response = await axios.post('/api/verify_token');
+            const response = await axios.post('/api/verify_token', { token });
+            if (response.status == 200) {
+                setView(true)
+            }
         } catch (error) {
-
+            navigate('/');
         }
     }
 
     const onSubmit = async (data) => {
-
+        console.log(data)
+        try {
+            const response = await axios.post('/api/reset-password', data)
+            if (response.status === 200) {
+                setBtnFormAnimation('animate__zoomOutRight')
+                setSuccessForm(true);
+                setTimeout(() => {
+                    setBtnView(false)
+                    setTimeout(() => {
+                        navigate('/')
+                    })
+                }, 1000);
+            }
+        } catch (error) {
+            if (error.response.status === 401) {
+                console.log('password not change')
+                setMsgError('Passwords do not match')
+            }
+            if (error.response.status === 404) {
+                console.log('User not Found')
+                setMsgError('User not found')
+            }
+        }
     }
 
     return (
@@ -63,8 +93,8 @@ const ResetPasswordForm = () => {
                                 <h1 className='text-3xl font-bold'>Reset Password</h1>
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
-                            {errors.username && <span className='text-xs text-danger '>{errors.username.message}</span>}
-                            {errors.tel && <span className='text-xs text-danger '>{errors.tel.message}</span>}
+                            {errors.password && <span className='text-xs text-danger '>{errors.password.message}</span>}
+                            {errors.confirmpass && <span className='text-xs text-danger '>{errors.confirmpass.message}</span>}
 
                             {msgError != '' && <span className='text-xs text-danger '>{msgError}</span>}
                         </div>
@@ -72,8 +102,8 @@ const ResetPasswordForm = () => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col space-y-5 w-80'>
                                 <div className={`flex flex-col space-y-5 animate__animated ${animationInput}`}>
-                                    <RegisterInput label='Password' id='username' name='username' type='text' register={register} errors={errors} watch={watch} />
-                                    <RegisterInput label='Confirm Password' id='phone' name='phone' type='tel' register={register} errors={errors} watch={watch} />
+                                    <RegisterInput label='Password' id='password' name='password' type='password' register={register} errors={errors} watch={watch} />
+                                    <RegisterInput label='Confirm Password' id='confirmpass' name='confirmpass' type='password' register={register} errors={errors} watch={watch} />
                                 </div>
                                 {btnView && <BtnForm content="Reset Password" animation={btnFormAnimation} />}
                                 {successForm && (

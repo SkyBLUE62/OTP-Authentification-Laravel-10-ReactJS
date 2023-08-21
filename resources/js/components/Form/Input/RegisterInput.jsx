@@ -8,9 +8,13 @@ const RegisterInput = ({ label, name, type, register, errors, watch, onChange = 
     const inputRef = useRef(null);
     const watchPassword = watch('password', '');
     switch (name) {
-        case 'username':
+        case 'name':
             validationRules = {
                 required: `The field ${label} is required.`,
+                minLength: {
+                    value: 4,
+                    message: 'The username must be at least 4 characters long.',
+                }
             };
             break;
         case 'email':

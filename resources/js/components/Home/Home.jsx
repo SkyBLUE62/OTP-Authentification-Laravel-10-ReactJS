@@ -16,11 +16,13 @@ const Home = () => {
     const [viewLogin, setViewLogin] = useState(false);
     const [viewLogout, setViewLogout] = useState(false);
     const [viewForgotPassword, setviewForgotPassword] = useState(false)
+
     const errorMessage = location.state?.errorMessage;
     const [user, setUser] = useState(false)
     const [animationUsername, setAnimationUsername] = useState('')
     const [animationBtnAuth, setAnimationBtnAuth] = useState('')
     const [animationBtnLogout, setAnimationBtnLogout] = useState('')
+
     const initRegister = () => {
         setViewRegister(!viewRegister);
     };
@@ -28,6 +30,10 @@ const Home = () => {
     const initLogin = () => {
         setViewLogin(!viewLogin);
     };
+
+    const initForgotPassword = () => {
+        setviewForgotPassword(!viewForgotPassword);
+    }
 
     const initLogout = async () => {
         try {
@@ -66,7 +72,7 @@ const Home = () => {
         }
         fetchData();
     }, []);
-
+    console.log(viewForgotPassword + ' viewForgotPassword')
     return (
         viewRendu && (
             <>
@@ -84,9 +90,8 @@ const Home = () => {
 
                 </div>
                 {viewRegister && <RegisterForm status={viewRegister} initRegister={initRegister} initLogin={initLogin} />}
-                {viewLogin && <LoginForm status={viewLogin} initLogin={initLogin} initRegister={initRegister} />}
-                {viewForgotPassword && <ForgotPassword />}
-                <ResetPasswordForm />
+                {viewLogin && <LoginForm status={viewLogin} initLogin={initLogin} initRegister={initRegister} setviewForgotPassword={setviewForgotPassword} />}
+                {viewForgotPassword && <ForgotPassword status={viewForgotPassword} initForgotPassword={initForgotPassword} />}
             </>
         )
     )

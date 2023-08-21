@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import FormSuccess from '../../assets/video/FormSuccess.gif'
 
-const LoginForm = ({ status, initLogin, initRegister }) => {
+const LoginForm = ({ status, initLogin, initRegister, setviewForgotPassword = null }) => {
     const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
     const [msgError, setMsgError] = useState('')
@@ -43,13 +43,15 @@ const LoginForm = ({ status, initLogin, initRegister }) => {
             document.body.style.overflow = 'auto';
         }, 500);
     }
+
     const onSubmit = async (data) => {
+        data = { ...data, login: true };
         console.log(data)
         try {
             const response = await axios.post('/api/verify_user', data)
-            if (response.status === 200 && response.data.token != 'null') {
+            if (response.status === 200 && response.data.token != null) {
                 setBtnFormAnimation('animate__zoomOutRight')
-                console.log(response.data.token)
+                console.log(response)
                 setTimeout(() => {
                     setBtnView(false)
                     setSuccessForm(true);
@@ -79,7 +81,17 @@ const LoginForm = ({ status, initLogin, initRegister }) => {
             initRegister();
         }, 1000);
     }
-    
+
+    const handleChangeForgotPassword = () => {
+        setAnimation('animate__backOutDown');
+        setTimeout(() => {
+            setviewForgotPassword(true);
+            setTimeout(() => {
+                initLogin()
+            }, 1000);
+        }, 1000);
+    }
+
     return (
         <>
             {view == true ?
@@ -91,7 +103,7 @@ const LoginForm = ({ status, initLogin, initRegister }) => {
                                 <h1 className='text-3xl font-bold'>Login</h1>
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
-                            {errors.username && <span className='text-xs text-danger '>{errors.username.message}</span>}
+                            {errors.name && <span className='text-xs text-danger '>{errors.name.message}</span>}
                             {errors.password && <span className='text-xs text-danger '>{errors.password.message}</span>}
                             {msgError != '' && <span className='text-xs text-danger '>{msgError}</span>}
                         </div>
@@ -99,7 +111,7 @@ const LoginForm = ({ status, initLogin, initRegister }) => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col space-y-5 w-80'>
                                 <div className={`flex flex-col space-y-5 animate__animated ${animationInput}`}>
-                                    <RegisterInput label='Username' id='username' name='username' type='text' register={register} errors={errors} watch={watch} />
+                                    <RegisterInput label='Username' id='name' name='name' type='text' register={register} errors={errors} watch={watch} />
                                     <RegisterInput label='Password' id='password' name='password' type='password' register={register} errors={errors} watch={watch} />
                                 </div>
 
@@ -108,7 +120,7 @@ const LoginForm = ({ status, initLogin, initRegister }) => {
                                         <input type="checkbox" name="remember" {...register('remember')} className='h-4 w-4' />
                                         <label htmlFor="" className='text-xs'>Remember me</label>
                                     </div>
-                                    <button className='text-xs'>Forgot Password ?</button>
+                                    <button className='text-xs' onClick={handleChangeForgotPassword}>Forgot Password ?</button>
                                 </div>
                                 {btnView && <BtnForm content="Login" animation={btnFormAnimation} />}
                                 {successForm && (

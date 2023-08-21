@@ -22,7 +22,7 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
     const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
     const [fieldAnimations, setFieldAnimations] = useState({
-        username: errors.username ? 'animate__shakeX' : '',
+        name: errors.name ? 'animate__shakeX' : '',
         email: errors.email ? 'animate__shakeX' : '',
         phone: errors.phone ? 'animate__shakeX' : '',
         password: errors.password ? 'animate__shakeX' : '',
@@ -38,7 +38,7 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
     useEffect(() => {
         setFieldAnimations(prevFieldAnimations => ({
             ...prevFieldAnimations,
-            username: errors.username ? 'animate__shakeX' : '',
+            name: errors.name ? 'animate__shakeX' : '',
             email: errors.email ? 'animate__shakeX' : '',
             phone: errors.phone ? 'animate__shakeX' : '',
             password: errors.password ? 'animate__shakeX' : '',
@@ -113,7 +113,7 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
             initLogin();
         }, 1000);
     }
-    
+
 
     return (
         <>
@@ -126,7 +126,7 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
                                 <h1 className='text-3xl font-bold'>Register</h1>
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
-                            {errors.username && <span className='text-xs text-danger '>{errors.username.message}</span>}
+                            {errors.name && <span className='text-xs text-danger '>{errors.name.message}</span>}
                             {errors.email && <span className='text-xs text-danger '>{errors.email.message}</span>}
                             {errors.phone && <span className='text-xs text-danger '>{errors.phone.message}</span>}
                             {errors.password && <span className='text-xs text-danger '>{errors.password.message}</span>}
@@ -136,7 +136,7 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
 
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col space-y-5 w-80'>
-                                <RegisterInput errorAnimation={fieldAnimations.username} label='Username' id='username' name='username' type='text' register={register} errors={errors} watch={watch} />
+                                <RegisterInput errorAnimation={fieldAnimations.name} label='Username' id='name' name='name' type='text' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.email} label='Email' id='email' name='email' type='email' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.phone} label='Phone' id='phone' name='phone' type='tel' register={register} errors={errors} watch={watch} />
                                 <RegisterInput errorAnimation={fieldAnimations.password} label='Password' id='password' name='password' type='password' register={register} errors={errors} watch={watch} />
