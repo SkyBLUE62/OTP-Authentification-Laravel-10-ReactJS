@@ -11,22 +11,21 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
     public function setDataUser(Request $request)
     {
-        $username = $request->input('username');
+        $name = $request->input('name');
         $email = $request->input('email');
         $phone = $request->input('phone');
         $password = Hash::make($request->input('password'));
         $confirmpass = $request->input('confirmpass');
 
-        if (User::where('name', $username)->exists()) {
+        if (User::where('name', $name)->exists()) {
             return response()->json([
                 'msgError' => 'This username already exists please choose another one',
-                'inputError' => 'username',
+                'inputError' => 'name',
             ], 422);
         }
         if (User::where('phone', $phone)->exists()) {
@@ -43,7 +42,7 @@ class AuthController extends Controller
         }
 
         $dataUser = [
-            'username' => $username,
+            'name' => $name,
             'email' => $email,
             'phone' => $phone,
             'password' => $password,
@@ -83,11 +82,10 @@ class AuthController extends Controller
             if (Session::has('user') && Session::has('code')) {
                 $dataUser = Session::get('user');
                 $code = Session::get('code');
-
                 // Verify if the provided code matches the stored code
                 if ($code == $inputCode) {
                     // Check if the user exists
-                    if (User::where('name', $dataUser['name'])->exists()) {
+                    if (User::where('name', $dataUser['name'])->exists() && Session::has('login')) {
                         $accessToken = $this->login();
                         Session::forget(['code', 'user', 'token']);
                         return response()->json(['message' => 'Login', 'access_token' => $accessToken], 200);
@@ -208,8 +206,10 @@ class AuthController extends Controller
 
     public function verify_user(Request $request)
     {
-        $user = $request->input('username');
+        $user = $request->input('name');
         $password = $request->input('password');
+        $login = $request->input('login');
+
         if (User::where('name', $user)->exists()) {
             $user = User::where('name', $user)->first();
             if (Hash::check($password, $user->password)) {
@@ -217,7 +217,7 @@ class AuthController extends Controller
                 $token = Str::random(60);
                 Session::put('user', $user);
                 Session::put('token', $token);
-
+                Session::put('login', $login);
                 return response()->json([
                     'message' => 'Correct Information',
                     'token' => $token
@@ -232,7 +232,7 @@ class AuthController extends Controller
         $dataUser = Session::get('user');
         // Create a new user with the provided user data
         $user = new User();
-        $user->name = $dataUser['username'];
+        $user->name = $dataUser['name'];
         $user->email = $dataUser['email'];
         $user->phone = $dataUser['phone'];
         $user->password = $dataUser['password'];
@@ -255,7 +255,7 @@ class AuthController extends Controller
         else Auth::login($user);
         // Create an access token
         $accessToken = $user->createToken('authToken')->plainTextToken;
-
+        Session::forget('login');
         return $accessToken;
     }
 
@@ -274,16 +274,36 @@ class AuthController extends Controller
     public function checkForgotPassword(Request $request)
     {
 
-        $username = $request->input('username');
+        $name = $request->input('name');
         $phone = $request->input('phone');
 
-        if (User::where(['name' => $username, 'phone' => $phone])->exists()) {
-            $user = User::where(['name' => $username, 'phone' => $phone])->first();
+        if (User::where(['name' => $name, 'phone' => $phone])->exists()) {
+            $user = User::where(['name' => $name, 'phone' => $phone])->first();
             $token = Str::random(60);
             Session::put('user', $user);
             Session::put('token', $token);
             Session::put('reset_password', true);
             return response()->json(['message' => 'User found', 'token' => $token], 200);
+        } else {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    }
+
+    public function resetPassword(Request $request)
+    {
+        if (Session::has('reset_password') && Session::has('user') && Session::has('token')) {
+            $password = $request->input('password');
+            $confirmpass = $request->input('confirmpass');
+            if ($password === $confirmpass) {
+                $userData = Session::get('user');
+                $user = User::where('name', $userData['name'])->first();
+                $user->password = Hash::make($password);
+                $user->save();
+                Session::forget(['user', 'token', 'reset_password']);
+                return response()->json(['message' => 'Password changed'], 200);
+            } else {
+                return response()->json(['message' => 'Passwords do not match'], 401);
+            }
         } else {
             return response()->json(['message' => 'User not found'], 404);
         }
