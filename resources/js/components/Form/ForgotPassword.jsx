@@ -8,9 +8,9 @@ import FormSuccess from '../../assets/video/FormSuccess.gif'
 import { useNavigate } from 'react-router-dom';
 
 
-const ForgotPassword = () => {
+const ForgotPassword = ({ status, initForgotPassword = null }) => {
 
-    const [view, setView] = useState(false);
+    const [view, setView] = useState(true);
     const [animation, setAnimation] = useState('');
     const [msgError, setMsgError] = useState('')
     const navigate = useNavigate();
@@ -30,11 +30,20 @@ const ForgotPassword = () => {
 
     } = useForm()
 
+    useEffect(() => {
+        if (status === true) {
+            console.log('true')
+            setView(true);
+            setAnimation('animate__backInUp');
+            document.body.style.overflow = 'hidden';
+        }
+    }, [status]);
+
     const handleClose = () => {
         setAnimation('animate__backOutDown');
         setTimeout(() => {
             setView(false);
-            initLogin();
+            initForgotPassword();
             document.body.style.overflow = 'auto';
         }, 500);
     }
@@ -64,7 +73,7 @@ const ForgotPassword = () => {
                                 <h1 className='text-3xl font-bold'>Reset Password</h1>
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
-                            {errors.username && <span className='text-xs text-danger '>{errors.username.message}</span>}
+                            {errors.name && <span className='text-xs text-danger '>{errors.name.message}</span>}
                             {errors.tel && <span className='text-xs text-danger '>{errors.tel.message}</span>}
 
                             {msgError != '' && <span className='text-xs text-danger '>{msgError}</span>}
@@ -73,7 +82,7 @@ const ForgotPassword = () => {
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <div className='flex flex-col space-y-5 w-80'>
                                 <div className={`flex flex-col space-y-5 animate__animated ${animationInput}`}>
-                                    <RegisterInput label='Username' id='username' name='username' type='text' register={register} errors={errors} watch={watch} />
+                                    <RegisterInput label='Username' id='name' name='name' type='text' register={register} errors={errors} watch={watch} />
                                     <RegisterInput label='Phone' id='phone' name='phone' type='tel' register={register} errors={errors} watch={watch} />
                                 </div>
                                 {btnView && <BtnForm content="Reset Password" animation={btnFormAnimation} />}
