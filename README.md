@@ -1,10 +1,11 @@
 # Auth OTP SMS with twilio
 ### Built With
 
-<div style="display:flex; flex-direction: row: justify-items: center; align-items: center;"> 
-<img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" style="width: 100px; margin-right: 20px;">
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/200px-Laravel.svg.png" alt="Laravel Logo" style="width: 100px;">
+<div style="display: flex; flex-direction: row; justify-content: center; align-items: center;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg" alt="React Logo" style="width: 100px; margin-right: 20px;">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/200px-Laravel.svg.png" alt="Laravel Logo" style="width: 100px;">
 </div>
+
 
 
 ## Project Installation
