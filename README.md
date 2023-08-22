@@ -1,7 +1,7 @@
 # Auth OTP SMS with twilio
 ### Built With
-* [![React][React.js]][React-url]
-* [![Laravel][Laravel.com]][Laravel-url]
+![React Logo](https://upload.wikimedia.org/wikipedia/commons/a/a7/React-icon.svg)
+![Laravel Logo](https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Laravel.svg/200px-Laravel.svg.png)
 
 ## Project Installation
 Start by cloning the app on your PC.
