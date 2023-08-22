@@ -23,6 +23,7 @@ Route::get('/dataUser', [AuthController::class, 'recup_userData']);
 Route::get('/sendSMS', [AuthController::class, 'sendSMS']);
 Route::get('/authCheck', [AuthController::class, 'authCheck']);
 Route::get('/logout', [AuthController::class, 'logout']);
+Route::get('/forgetPasswordSession', [AuthController::class, 'forgetPasswordSession']);
 
 Route::post('/setDataUser', [AuthController::class, 'setDataUser']);
 Route::post('/verify_code', [AuthController::class, 'verify_code']);
