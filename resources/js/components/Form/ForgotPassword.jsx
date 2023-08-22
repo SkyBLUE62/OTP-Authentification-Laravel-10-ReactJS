@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = ({ status, initForgotPassword = null }) => {
 
-    const [view, setView] = useState(true);
+    const [view, setView] = useState(false);
     const [animation, setAnimation] = useState('');
     const [msgError, setMsgError] = useState('')
     const navigate = useNavigate();
@@ -39,13 +39,19 @@ const ForgotPassword = ({ status, initForgotPassword = null }) => {
         }
     }, [status]);
 
-    const handleClose = () => {
-        setAnimation('animate__backOutDown');
-        setTimeout(() => {
-            setView(false);
-            initForgotPassword();
-            document.body.style.overflow = 'auto';
-        }, 500);
+    const handleClose = async () => {
+
+        try {
+            const response = await axios.get('/api/forgetPasswordSession')
+            setAnimation('animate__backOutDown');
+            setTimeout(() => {
+                setView(false);
+                initForgotPassword();
+                document.body.style.overflow = 'auto';
+            }, 500);
+        } catch (error) {
+            navigate('/')
+        }
     }
 
     const onSubmit = async (data) => {
@@ -54,11 +60,23 @@ const ForgotPassword = ({ status, initForgotPassword = null }) => {
             const response = await axios.post('/api/checkForgotPassword', data)
             if (response.status === 200) {
                 console.log(response)
-                navigate('/phone-validation/' + response.data.token)
+                setBtnFormAnimation('animate__zoomOutRight')
+                setTimeout(() => {
+                    setBtnView(false)
+                    setSuccessForm(true);
+                }, 1000);
+                setTimeout(() => {
+                    const token = response.data.token
+                    navigate(`/phone-validation/${token}`);
+                }, 2000);
             }
         } catch (error) {
-            console.log(error);
-
+            setMsgError('Incorrect username or phone number')
+            reset({ phone: '' });
+            setAnimationInput('animate__shakeX');
+            setTimeout(() => {
+                setAnimationInput('');
+            }, 1000);
         }
     }
 
@@ -74,7 +92,7 @@ const ForgotPassword = ({ status, initForgotPassword = null }) => {
                                 <AiOutlineCloseCircle onClick={handleClose} className='text-danger text-3xl cursor-pointer' />
                             </div>
                             {errors.name && <span className='text-xs text-danger '>{errors.name.message}</span>}
-                            {errors.tel && <span className='text-xs text-danger '>{errors.tel.message}</span>}
+                            {errors.phone && <span className='text-xs text-danger '>{errors.phone.message}</span>}
 
                             {msgError != '' && <span className='text-xs text-danger '>{msgError}</span>}
                         </div>

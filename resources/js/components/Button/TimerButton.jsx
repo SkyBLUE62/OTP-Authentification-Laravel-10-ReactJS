@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-const TimerButton = ({ countdown, setCountdown, sendSMS }) => {
+const TimerButton = ({ countdown, setCountdown, sendSMS, setIsTimerRunning }) => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
 
     const startCountdown = () => {
-        setCountdown(60); // Réinitialisation du compteur à 5 secondes
+        setCountdown(5); // Réinitialisation du compteur à 5 secondes
         setButtonDisabled(true); // Désactivation du bouton
         sendSMS();
     };
@@ -25,6 +25,7 @@ const TimerButton = ({ countdown, setCountdown, sendSMS }) => {
             };
         } else if (countdown === 0) {
             setButtonDisabled(false); // Réactive le bouton lorsque le compteur atteint 0
+            setIsTimerRunning(false);
         }
     }, [countdown, buttonDisabled]);
 

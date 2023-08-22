@@ -54,14 +54,19 @@ const RegisterForm = ({ initRegister, status, initLogin }) => {
         }
     }, [status])
 
-    const handleClose = () => {
-        setAnimation('animate__animated animate__backOutDown');
+    const handleClose = async () => {
 
-        setTimeout(() => {
-            setView(false);
-            initRegister();
-            document.body.style.overflow = 'auto';
-        }, 500);
+        try {
+            const response = await axios.get('/api/forgetPasswordSession')
+            setAnimation('animate__animated animate__backOutDown');
+            setTimeout(() => {
+                setView(false);
+                initRegister();
+                document.body.style.overflow = 'auto';
+            }, 500);
+        } catch (error) {
+            navigate('/')
+        }
     }
 
     async function onSubmit(data) {

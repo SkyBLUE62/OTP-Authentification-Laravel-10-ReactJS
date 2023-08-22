@@ -51,12 +51,10 @@ const LoginForm = ({ status, initLogin, initRegister, setviewForgotPassword = nu
             const response = await axios.post('/api/verify_user', data)
             if (response.status === 200 && response.data.token != null) {
                 setBtnFormAnimation('animate__zoomOutRight')
-                console.log(response)
                 setTimeout(() => {
                     setBtnView(false)
                     setSuccessForm(true);
                 }, 1000);
-                console.log(response.data.token)
                 setTimeout(() => {
                     const token = response.data.token
                     navigate(`/phone-validation/${token}`);
@@ -72,14 +70,23 @@ const LoginForm = ({ status, initLogin, initRegister, setviewForgotPassword = nu
             }, 1000);
         }
     }
-    const handleChangeForm = () => {
-        setAnimation('animate__backOutDown');
-        setTimeout(() => {
-            setTimeout(() => {
-                initLogin();
-            }, 1000);
-            initRegister();
-        }, 1000);
+    const handleChangeForm = async () => {
+        try {
+            const response = await axios.get('/api/forgetPasswordSession');
+            if (response.status === 200) {
+                setAnimation('animate__backOutDown');
+                setTimeout(() => {
+                    setTimeout(() => {
+                        initLogin();
+                    }, 1000);
+                    initRegister();
+                }, 1000);
+            }
+
+        } catch (error) {
+            navigate('/')
+        }
+
     }
 
     const handleChangeForgotPassword = () => {

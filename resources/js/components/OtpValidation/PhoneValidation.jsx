@@ -20,8 +20,14 @@ const PhoneValidation = () => {
     const [phone, setPhone] = useState('');
     const [code, setCode] = useState('');
     const [AnimationInput, setAnimationInput] = useState('');
-    const [isTimerRunning, setIsTimerRunning] = useState(false); // Ajout de l'état pour le timer
+    const [isTimerRunning, setIsTimerRunning] = useState(false);
 
+    /**
+     * Handles the change event for the input field.
+     *
+     * @param {event} event - The change event.
+     * @param {number} index - The index of the input field.
+     */
     const handleInputChange = (event, index) => {
         const newValue = event.target.value.slice(0, 1);
         const newInputValues = [...inputValues];
@@ -33,6 +39,12 @@ const PhoneValidation = () => {
         }
     };
 
+    /**
+     * Handles the keydown event in the input.
+     *
+     * @param {object} event - The keydown event object.
+     * @param {number} index - The index of the input.
+     */
     const handleInputKeyDown = (event, index) => {
         if (event.key === 'Backspace' && !inputValues[index] && index > 0) {
             inputRefs[index - 1].current.focus();
@@ -43,19 +55,33 @@ const PhoneValidation = () => {
         checkUser();
     }, []);
 
+    /**
+     * Checks the user's token and retrieves the user's data if the token is valid.
+     *
+     * @return {Promise<void>} - Returns nothing.
+     */
     const checkUser = async () => {
         try {
-            const response = await axios.post('/api/verify_token', { token });
-            if (response.status === 401) {
+            // Verify the user's token
+            const verifyTokenResponse = await axios.post('/api/verify_token', { token });
+
+            // If the token is invalid, navigate to the home page with an error message
+            if (verifyTokenResponse.status === 401) {
                 navigate('/', "User not Found, Please try to register again ");
-            } else if (response.status === 200) {
+            } else if (verifyTokenResponse.status === 200) {
+                // Set the rendu view to true
                 setRenduView(true);
+
                 try {
-                    const response = await axios.get('/api/dataUser');
-                    if (response.status === 200) {
-                        const user = response.data.user;
+                    // Retrieve the user's data
+                    const dataUserResponse = await axios.get('/api/dataUser');
+
+                    // If the data retrieval is successful, set the user's phone number
+                    if (dataUserResponse.status === 200) {
+                        const user = dataUserResponse.data.user;
                         setPhone(user.phone);
                     } else {
+                        // If the data retrieval is unsuccessful, navigate to the home page with an error message
                         navigate('/', "User not Found, Please try to register again ");
                     }
                 } catch (error) {
@@ -64,10 +90,16 @@ const PhoneValidation = () => {
             }
         } catch (error) {
             console.log(error);
+            // If an error occurs, navigate to the home page with an error message
             navigate('/', "User not Found, Please try to register again ");
         }
     };
 
+    /**
+     * Sends an SMS by making a request to the '/api/sendSMS' endpoint.
+     *
+     * @return {Promise<void>} This function does not return anything.
+     */
     const sendSMS = async () => {
         try {
             const sendSMS = await axios.get('/api/sendSMS');
@@ -80,11 +112,21 @@ const PhoneValidation = () => {
         }
     };
 
+    /**
+     * Handles the form submission and sends a request to verify the code.
+     *
+     * @param {Object} e - The event object.
+     * @return {Promise} A promise that resolves when the code verification is complete.
+     */
     const handleSubmit = async (e) => {
+        // Prevent the form from submitting
         e.preventDefault();
+
+        // Combine the input values to form the code
         const code = inputValues.join('');
 
         try {
+            // Send a POST request to verify the code
             const response = await axios.post('/api/verify_code', { code }, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -93,12 +135,21 @@ const PhoneValidation = () => {
 
             if (response.status === 200) {
                 if (response.data.token !== null) {
-                    navigate('/reset-password/' + response.data.token);
+                    // Animate the button and redirect to reset password page if a token is present
+                    setAnimationBtn('animate__zoomOutRight')
+                    setTimeout(() => {
+                        setBtnRendu(false);
+                    }, 1000);
+                    setTimeout(() => {
+                        navigate('/reset-password/' + response.data.token);
+                    }, 2000);
                     return;
                 }
-                console.log(response)
+
+                // Store the access token in local storage
                 localStorage.setItem('authToken', response.data.access_token);
 
+                // Animate the button and redirect to home page
                 setAnimationBtn('animate__bounceOutRight');
                 setTimeout(() => {
                     setBtnRendu(false);
@@ -113,6 +164,7 @@ const PhoneValidation = () => {
             }
         } catch (error) {
             if (error.response && error.response.status === 401) {
+                // Clear input values and shake the input field if unauthorized
                 setInputValues(['', '', '', '', '', '']);
                 setAnimationInput('animate__shakeX');
                 setTimeout(() => {
@@ -122,7 +174,6 @@ const PhoneValidation = () => {
                 console.error('Erreur lors de la requête:', error);
             }
         }
-
     };
 
     const handleTimerButtonClick = () => {
@@ -164,6 +215,7 @@ const PhoneValidation = () => {
                                     setCountdown={setCountdown}
                                     sendSMS={handleTimerButtonClick}
                                     isTimerRunning={isTimerRunning}
+                                    setIsTimerRunning={setIsTimerRunning}
                                 />
                             </span>
                         </div>

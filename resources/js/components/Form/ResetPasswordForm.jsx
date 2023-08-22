@@ -34,13 +34,19 @@ const ResetPasswordForm = () => {
         checkUser()
     }, [token])
 
-    const handleClose = () => {
-        setAnimation('animate__backOutDown');
-        setTimeout(() => {
+    const handleClose = async () => {
+
+        try {
+            const response = await axios.get('/api/forgetPasswordSession')
+            setAnimation('animate__backOutDown');
+            setTimeout(() => {
+                navigate('/')
+                setView(false);
+                document.body.style.overflow = 'auto';
+            }, 500);
+        } catch (error) {
             navigate('/')
-            setView(false);
-            document.body.style.overflow = 'auto';
-        }, 500);
+        }
     }
 
 
@@ -62,22 +68,21 @@ const ResetPasswordForm = () => {
             const response = await axios.post('/api/reset-password', data)
             if (response.status === 200) {
                 setBtnFormAnimation('animate__zoomOutRight')
-                setSuccessForm(true);
                 setTimeout(() => {
                     setBtnView(false)
+                    setSuccessForm(true);
                     setTimeout(() => {
                         navigate('/')
-                    })
+                    }, 2000)
                 }, 1000);
             }
         } catch (error) {
-            if (error.response.status === 401) {
-                console.log('password not change')
-                setMsgError('Passwords do not match')
-            }
-            if (error.response.status === 404) {
-                console.log('User not Found')
-                setMsgError('User not found')
+            if (error.response && error.response.status === 404) {
+                console.log('User not Found');
+                setMsgError('User not found');
+                navigate('/');
+            } else {
+                console.log('An error occurred:', error);
             }
         }
     }
