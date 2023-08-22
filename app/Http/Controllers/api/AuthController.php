@@ -14,26 +14,39 @@ use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
+    /**
+     * Sets data for the user.
+     *
+     * @param Request $request The request object.
+     * @throws Some_Exception_Class Description of exception.
+     * @return JsonResponse The JSON response containing the user data and token.
+     */
     public function setDataUser(Request $request)
     {
+        // Get input values from the request
         $name = $request->input('name');
         $email = $request->input('email');
         $phone = $request->input('phone');
         $password = Hash::make($request->input('password'));
         $confirmpass = $request->input('confirmpass');
 
+        // Check if the username already exists
         if (User::where('name', $name)->exists()) {
             return response()->json([
                 'msgError' => 'This username already exists please choose another one',
                 'inputError' => 'name',
             ], 422);
         }
+
+        // Check if the phone number is already assigned to an account
         if (User::where('phone', $phone)->exists()) {
             return response()->json([
                 'msgError' => 'This telephone number is already assigned to an account',
                 'inputError' => 'phone',
             ], 422);
         }
+
+        // Check if the email is already assigned to an account
         if (User::where('email', $email)->exists()) {
             return response()->json([
                 'msgError' => 'This email is already assigned to an account',
@@ -41,15 +54,19 @@ class AuthController extends Controller
             ], 422);
         }
 
+        // Create an array with the user data
         $dataUser = [
             'name' => $name,
             'email' => $email,
             'phone' => $phone,
             'password' => $password,
         ];
+
+        // Generate a random token and store it in the session
         Session::put('token', Str::random(60));
         Session::put('user', $dataUser);
 
+        // Return the user data and token in a JSON response
         return response()->json(['user' => $dataUser, 'token' => Session::get('token')], 200);
     }
 
@@ -179,7 +196,7 @@ class AuthController extends Controller
             $message = "Votre code de vérification est : $code";
 
             // Send the SMS message using Twilio
-            // $twilio->messages->create($user['phone'], ['from' => env('TWILIO_FROM'), 'body' => $message]);
+            $twilio->messages->create($user['phone'], ['from' => env('TWILIO_FROM'), 'body' => $message]);
 
             // Return a JSON response indicating that the code has been sent
             return response()->json(['code' => $code], 200);
@@ -204,29 +221,52 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Verifies a user's credentials and returns a JSON response.
+     *
+     * @param Request $request The HTTP request object.
+     * @throws None
+     * @return \Illuminate\Http\JsonResponse The JSON response containing the authentication result.
+     */
     public function verify_user(Request $request)
     {
+        // Retrieve user inputs
         $user = $request->input('name');
         $password = $request->input('password');
         $login = $request->input('login');
 
+        // Check if user exists
         if (User::where('name', $user)->exists()) {
             $user = User::where('name', $user)->first();
+
+            // Verify password
             if (Hash::check($password, $user->password)) {
 
+                // Generate token
                 $token = Str::random(60);
+
+                // Store user data in session
                 Session::put('user', $user);
                 Session::put('token', $token);
                 Session::put('login', $login);
+
+                // Return success response
                 return response()->json([
                     'message' => 'Correct Information',
                     'token' => $token
                 ], 200);
             }
         }
+
+        // Return error response
         return response()->json(['message' => 'Username or Password is incorrect'], 401);
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @return string The access token generated for the user.
+     */
     public function register()
     {
         $dataUser = Session::get('user');
@@ -246,6 +286,11 @@ class AuthController extends Controller
         return $accessToken;
     }
 
+    /**
+     * Logs in a user and returns an access token.
+     *
+     * @return string The access token.
+     */
     public function login()
     {
         $dataUser = Session::get('user');
@@ -259,6 +304,12 @@ class AuthController extends Controller
         return $accessToken;
     }
 
+    /**
+     * Logs out the user.
+     *
+     * @param Request $request The request object.
+     * @return JsonResponse The response containing the logout message and status code.
+     */
     public function logout(Request $request)
     {
         if (Auth::check()) {
@@ -271,6 +322,13 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Check if the provided name and phone match a user in the database.
+     *
+     * @param Request $request The HTTP request object.
+     * @throws None
+     * @return \Illuminate\Http\JsonResponse The JSON response containing the result of the check.
+     */
     public function checkForgotPassword(Request $request)
     {
 
@@ -289,6 +347,12 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Reset the user's password.
+     *
+     * @param Request $request The HTTP request object containing the new password.
+     * @return \Illuminate\Http\JsonResponse The JSON response indicating the result of the password reset.
+     */
     public function resetPassword(Request $request)
     {
         if (Session::has('reset_password') && Session::has('user') && Session::has('token')) {
@@ -306,6 +370,21 @@ class AuthController extends Controller
             }
         } else {
             return response()->json(['message' => 'User not found'], 404);
+        }
+    }
+
+    /**
+     * A function to forget the password session.
+     *
+     * @return Some_Return_Value the JSON response indicating whether the session was removed or not.
+     */
+    public function forgetPasswordSession()
+    {
+        if (Session::has('reset_password')) {
+            Session::forget('reset_password');
+            return response()->json(['message' => 'Session Remove'], 200);
+        } else {
+            return response()->json(['message' => 'Not Session'], 200);
         }
     }
 }
